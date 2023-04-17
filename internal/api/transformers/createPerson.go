@@ -10,13 +10,16 @@ import (
 	"github.com/ravilock/desafio-backend-lucree/internal/api/dtos"
 	"github.com/ravilock/desafio-backend-lucree/internal/api/validation"
 	"github.com/ravilock/desafio-backend-lucree/internal/app/models"
+	"golang.org/x/crypto/bcrypt"
 )
+
+const passwordHashingCost = 10
 
 func CreatePerson(dto *dtos.CreatePersonDto) (*models.Person, error) {
 	if err := validation.Validate.Struct(dto); err != nil {
 		if validationErrors := new(validator.ValidationErrors); errors.As(err, validationErrors) {
 			for _, validationError := range *validationErrors {
-				return nil, api.InvalidFieldError(validationError.Field(), validationError.Value())
+				return nil, api.InvalidFieldError(validationError.Field(), validationError.Value(), "")
 			}
 		}
 		return nil, err
@@ -34,8 +37,16 @@ func CreatePerson(dto *dtos.CreatePersonDto) (*models.Person, error) {
 	if err != nil {
 		if validationErrors := new(validator.ValidationErrors); errors.As(err, validationErrors) {
 			for _, validationError := range *validationErrors {
-				return nil, api.InvalidFieldError(validationError.Tag(), validationError.Value())
+				return nil, api.InvalidFieldError(validationError.Tag(), validationError.Value(), "")
 			}
+		}
+		return nil, err
+	}
+
+	password, err := bcrypt.GenerateFromPassword([]byte(*dto.Password), passwordHashingCost)
+	if err != nil {
+		if err == bcrypt.ErrPasswordTooLong {
+			return nil, api.InvalidFieldError("password", *dto.Password, "too long")
 		}
 		return nil, err
 	}
@@ -45,7 +56,7 @@ func CreatePerson(dto *dtos.CreatePersonDto) (*models.Person, error) {
 		FirstName: dto.FirstName,
 		LastName:  dto.LastName,
 		BirthDay:  &birthday,
-		Password:  dto.Password,
 		Username:  dto.Username,
+		Password:  password,
 	}, nil
 }

@@ -17,9 +17,18 @@ var InternalServerError = &echo.HTTPError{
 	Message: "An Internal Server Error Ocured",
 }
 
-func InvalidFieldError(field string, value any) *echo.HTTPError {
+var UnauthorizedError = &echo.HTTPError{
+	Code:    http.StatusUnauthorized,
+	Message: "UnauthorizedError",
+}
+
+func InvalidFieldError(field string, value any, detail string) *echo.HTTPError {
+	message := fmt.Sprintf("%v Is Not Valid For Field %s.", value, field)
+	if detail != "" {
+		message = fmt.Sprintf("%s - (%s)", message, detail)
+	}
 	return &echo.HTTPError{
 		Code:    http.StatusBadRequest,
-		Message: fmt.Sprintf("%v Is Not Valid For Field %s", value, field),
+		Message: message,
 	}
 }

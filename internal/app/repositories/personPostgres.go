@@ -13,8 +13,8 @@ import (
 
 const usernameUniqueConstraint = "unique_username"
 
-func CreatePerson(context context.Context, person *models.Person, tx *sql.Tx) error {
-	err := tx.QueryRowContext(context,
+func CreatePerson(ctx context.Context, person *models.Person, tx *sql.Tx) error {
+	err := tx.QueryRowContext(ctx,
 		`INSERT INTO people
     (first_name, last_name, birthday, password, username)
     VALUES ($1, $2, $3, $4, $5)

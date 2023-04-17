@@ -8,6 +8,6 @@ import (
 	"github.com/ravilock/desafio-backend-lucree/internal/app/repositories"
 )
 
-func CreatePerson(context context.Context, person *models.Person, tx *sql.Tx) error {
-	return repositories.CreatePerson(context, person, tx)
+func CreatePerson(ctx context.Context, person *models.Person, tx *sql.Tx) error {
+	return repositories.CreatePerson(ctx, person, tx)
 }

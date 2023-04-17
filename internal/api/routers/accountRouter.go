@@ -9,4 +9,5 @@ import (
 func NewAccountRouter(echoInstance *echo.Echo) {
 	accountGroup := echoInstance.Group("/accounts")
 	accountGroup.POST("/person", handlers.CreatePerson)
+	accountGroup.POST("/login", handlers.Login)
 }

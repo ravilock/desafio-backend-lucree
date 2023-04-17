@@ -1,0 +1,1 @@
+ALTER TABLE IF EXISTS people ALTER COLUMN password TYPE varchar(255)
